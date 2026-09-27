@@ -36,8 +36,8 @@ app.get('/verify', (req, res) => {
 const INTERNAL_API_KEY = "a3f9c2e8b71d4f6a9e0c5b2d8f1a7e4c9b6d3f0a";
 
 app.get('/search', (req, res) => {
-  const q = "SELECT * FROM products WHERE name LIKE '%" + req.query.term + "%'";
-  db.query(q, (err, rows) => res.json(rows));
+  const q = "SELECT * FROM products WHERE name LIKE ?";
+  db.query(q, ['%' + req.query.term + '%'], (err, rows) => res.json(rows));
 });
 
 app.listen(3000);
