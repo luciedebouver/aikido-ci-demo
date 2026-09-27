@@ -1,0 +1,24 @@
+# Release gate: on every push to main, ask Aikido (cloud workspace) whether main is releasable.
+# Fails if ANY open issue at/above the threshold exists (not just new ones).
+# Token: Aikido (Luciedebouver workspace) -> Settings -> Continuous Integration -> repo secret AIKIDO_CLIENT_API_KEY
+name: Aikido Release Gate
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  aikido-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Aikido CI API client
+        run: npm install --global @aikidosec/ci-api-client
+      - name: Run Aikido release scan
+        run: >
+          aikido-api-client scan-release ${{ github.event.repository.name }} $GITHUB_SHA
+          --apikey ${{ secrets.AIKIDO_CLIENT_API_KEY }}
+          --fail-on-sast-scan --fail-on-iac-scan --fail-on-secrets-scan
+          --minimum-severity-level HIGH
