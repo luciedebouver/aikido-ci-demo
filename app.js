@@ -30,5 +30,14 @@ app.get('/verify', (req, res) => {
     res.status(401).send('invalid token');
   }
 });
+// LIVE DEMO SNIPPET — paste into app.js (above app.listen) on branch feature/search.
+// Introduces 2 NEW issues: hardcoded secret + SQL injection.
+
+const INTERNAL_API_KEY = "a3f9c2e8b71d4f6a9e0c5b2d8f1a7e4c9b6d3f0a";
+
+app.get('/search', (req, res) => {
+  const q = "SELECT * FROM products WHERE name LIKE '%" + req.query.term + "%'";
+  db.query(q, (err, rows) => res.json(rows));
+});
 
 app.listen(3000);
